@@ -1,0 +1,572 @@
+{
+    "buildInfo": {
+        "rustc": {
+            "version": "1.69.0-nightly",
+            "commitHash": "001a77fac33f6560ff361ff38f661ff5f1c6bf85",
+            "commitDate": "2023-01-30",
+            "channel": "Nightly",
+            "short": "rustc 1.69.0-nightly (001a77fac 2023-01-30)"
+        },
+        "contractCrate": {
+            "name": "nft-minter",
+            "version": "1.1.0",
+            "git_version": "b1cbefa33-modified"
+        },
+        "framework": {
+            "name": "elrond-wasm",
+            "version": "0.35.0"
+        }
+    },
+    "name": "NftMinter",
+    "constructor": {
+        "inputs": [
+            {
+                "name": "accepted_payment_token",
+                "type": "EgldOrEsdtTokenIdentifier"
+            },
+            {
+                "name": "accepted_payment_token_nonce",
+                "type": "u64"
+            },
+            {
+                "name": "selling_price",
+                "type": "BigUint"
+            },
+            {
+                "name": "token_name",
+                "type": "bytes"
+            },
+            {
+                "name": "token_ticker",
+                "type": "EgldOrEsdtTokenIdentifier"
+            },
+            {
+                "name": "base_cid",
+                "type": "bytes"
+            },
+            {
+                "name": "total_amount_of_tokens",
+                "type": "u32"
+            },
+            {
+                "name": "tokens_limit_per_address",
+                "type": "u32"
+            },
+            {
+                "name": "royalties",
+                "type": "BigUint"
+            },
+            {
+                "name": "file_extension",
+                "type": "bytes"
+            },
+            {
+                "name": "funder_address",
+                "type": "Address"
+            },
+            {
+                "name": "marketplace_cut_percentage",
+                "type": "u64"
+            },
+            {
+                "name": "start_edition",
+                "type": "u32"
+            },
+            {
+                "name": "tags",
+                "type": "optional<bytes>",
+                "multi_arg": true
+            }
+        ],
+        "outputs": []
+    },
+    "endpoints": [
+        {
+            "name": "pause",
+            "onlyOwner": true,
+            "mutability": "mutable",
+            "inputs": [],
+            "outputs": []
+        },
+        {
+            "name": "start",
+            "onlyOwner": true,
+            "mutability": "mutable",
+            "inputs": [
+                {
+                    "name": "opt_mint_start_time",
+                    "type": "optional<u64>",
+                    "multi_arg": true
+                }
+            ],
+            "outputs": []
+        },
+        {
+            "name": "setDrop",
+            "onlyOwner": true,
+            "mutability": "mutable",
+            "inputs": [
+                {
+                    "name": "amount_of_tokens_per_drop",
+                    "type": "u32"
+                },
+                {
+                    "name": "tokens_limit_per_address_per_drop",
+                    "type": "optional<u32>",
+                    "multi_arg": true
+                }
+            ],
+            "outputs": []
+        },
+        {
+            "name": "unsetDrop",
+            "onlyOwner": true,
+            "mutability": "mutable",
+            "inputs": [],
+            "outputs": []
+        },
+        {
+            "name": "setNewPrice",
+            "onlyOwner": true,
+            "mutability": "mutable",
+            "inputs": [
+                {
+                    "name": "accepted_payment_token",
+                    "type": "EgldOrEsdtTokenIdentifier"
+                },
+                {
+                    "name": "accepted_payment_token_nonce",
+                    "type": "u64"
+                },
+                {
+                    "name": "selling_price",
+                    "type": "BigUint"
+                }
+            ],
+            "outputs": []
+        },
+        {
+            "name": "setNewTokensLimitPerAddress",
+            "onlyOwner": true,
+            "mutability": "mutable",
+            "inputs": [
+                {
+                    "name": "limit",
+                    "type": "u32"
+                }
+            ],
+            "outputs": []
+        },
+        {
+            "name": "giveaway",
+            "onlyOwner": true,
+            "mutability": "mutable",
+            "inputs": [
+                {
+                    "name": "address",
+                    "type": "Address"
+                },
+                {
+                    "name": "amount_of_tokens",
+                    "type": "u32"
+                }
+            ],
+            "outputs": []
+        },
+        {
+            "name": "claim",
+            "onlyOwner": true,
+            "mutability": "mutable",
+            "inputs": [
+                {
+                    "name": "amount_of_tokens",
+                    "type": "u32"
+                }
+            ],
+            "outputs": []
+        },
+        {
+            "name": "claimNft",
+            "onlyOwner": true,
+            "mutability": "mutable",
+            "inputs": [
+                {
+                    "name": "edition",
+                    "type": "u32"
+                },
+                {
+                    "name": "page",
+                    "type": "u32"
+                },
+                {
+                    "name": "page_size",
+                    "type": "u32"
+                }
+            ],
+            "outputs": []
+        },
+        {
+            "name": "claimTokens",
+            "onlyOwner": true,
+            "mutability": "mutable",
+            "inputs": [
+                {
+                    "name": "token_id",
+                    "type": "EgldOrEsdtTokenIdentifier"
+                },
+                {
+                    "name": "token_nonce",
+                    "type": "u64"
+                }
+            ],
+            "outputs": []
+        },
+        {
+            "name": "loadNfts",
+            "onlyOwner": true,
+            "mutability": "mutable",
+            "inputs": [
+                {
+                    "name": "amount",
+                    "type": "u32"
+                }
+            ],
+            "outputs": []
+        },
+        {
+            "name": "enableAllowList",
+            "onlyOwner": true,
+            "mutability": "mutable",
+            "inputs": [],
+            "outputs": []
+        },
+        {
+            "name": "disableAllowList",
+            "onlyOwner": true,
+            "mutability": "mutable",
+            "inputs": [],
+            "outputs": []
+        },
+        {
+            "name": "enableBotProtection",
+            "onlyOwner": true,
+            "mutability": "mutable",
+            "inputs": [],
+            "outputs": []
+        },
+        {
+            "name": "disableBotProtection",
+            "onlyOwner": true,
+            "mutability": "mutable",
+            "inputs": [],
+            "outputs": []
+        },
+        {
+            "name": "populateAllowList",
+            "onlyOwner": true,
+            "mutability": "mutable",
+            "inputs": [
+                {
+                    "name": "addresses",
+                    "type": "List<Address>"
+                }
+            ],
+            "outputs": []
+        },
+        {
+            "name": "addAddressToAllowList",
+            "onlyOwner": true,
+            "mutability": "mutable",
+            "inputs": [
+                {
+                    "name": "address",
+                    "type": "Address"
+                }
+            ],
+            "outputs": []
+        },
+        {
+            "name": "clearAllowList",
+            "onlyOwner": true,
+            "mutability": "mutable",
+            "inputs": [],
+            "outputs": []
+        },
+        {
+            "name": "register",
+            "onlyOwner": true,
+            "mutability": "mutable",
+            "payableInTokens": [
+                "EGLD"
+            ],
+            "inputs": [],
+            "outputs": []
+        },
+        {
+            "name": "mint",
+            "mutability": "mutable",
+            "payableInTokens": [
+                "*"
+            ],
+            "inputs": [
+                {
+                    "name": "amount_of_tokens",
+                    "type": "u32"
+                },
+                {
+                    "name": "opt_signature",
+                    "type": "optional<array64<u8>>",
+                    "multi_arg": true
+                },
+                {
+                    "name": "opt_signature_expiration",
+                    "type": "optional<u64>",
+                    "multi_arg": true
+                }
+            ],
+            "outputs": []
+        },
+        {
+            "name": "shuffle",
+            "mutability": "mutable",
+            "inputs": [],
+            "outputs": []
+        },
+        {
+            "name": "getMinterInformation",
+            "mutability": "readonly",
+            "inputs": [],
+            "outputs": [
+                {
+                    "type": "Minter"
+                }
+            ]
+        },
+        {
+            "name": "getAddressInformation",
+            "mutability": "readonly",
+            "inputs": [
+                {
+                    "name": "address",
+                    "type": "Address"
+                }
+            ],
+            "outputs": [
+                {
+                    "type": "AddressInformation"
+                }
+            ]
+        },
+        {
+            "name": "getVersion",
+            "mutability": "readonly",
+            "inputs": [],
+            "outputs": [
+                {
+                    "type": "u32"
+                }
+            ]
+        },
+        {
+            "name": "getAllowList",
+            "mutability": "readonly",
+            "inputs": [],
+            "outputs": [
+                {
+                    "type": "variadic<Address>",
+                    "multi_result": true
+                }
+            ]
+        },
+        {
+            "name": "setShareholders",
+            "onlyOwner": true,
+            "mutability": "mutable",
+            "inputs": [
+                {
+                    "name": "args",
+                    "type": "variadic<multi<Address,u64>>",
+                    "multi_arg": true
+                }
+            ],
+            "outputs": []
+        },
+        {
+            "name": "clearShareholders",
+            "onlyOwner": true,
+            "mutability": "mutable",
+            "inputs": [],
+            "outputs": []
+        },
+        {
+            "name": "getShareholders",
+            "mutability": "readonly",
+            "inputs": [],
+            "outputs": [
+                {
+                    "type": "variadic<Shareholder>",
+                    "multi_result": true
+                }
+            ]
+        },
+        {
+            "name": "getIsShareholdersValidated",
+            "mutability": "readonly",
+            "inputs": [],
+            "outputs": [
+                {
+                    "type": "bool"
+                }
+            ]
+        }
+    ],
+    "events": [],
+    "hasCallback": true,
+    "types": {
+        "AddressInformation": {
+            "type": "struct",
+            "fields": [
+                {
+                    "name": "is_allowed",
+                    "type": "bool"
+                },
+                {
+                    "name": "total_token_minted",
+                    "type": "u32"
+                },
+                {
+                    "name": "token_minted_for_drop",
+                    "type": "u32"
+                }
+            ]
+        },
+        "Drop": {
+            "type": "struct",
+            "fields": [
+                {
+                    "name": "drop_id",
+                    "type": "u16"
+                },
+                {
+                    "name": "total_token_for_drop",
+                    "type": "u32"
+                },
+                {
+                    "name": "total_token_left_for_drop",
+                    "type": "u32"
+                },
+                {
+                    "name": "total_token_minted_for_drop",
+                    "type": "u32"
+                },
+                {
+                    "name": "limit_per_address_for_drop",
+                    "type": "u32"
+                }
+            ]
+        },
+        "EsdtToken": {
+            "type": "struct",
+            "fields": [
+                {
+                    "name": "token_type",
+                    "type": "EgldOrEsdtTokenIdentifier"
+                },
+                {
+                    "name": "nonce",
+                    "type": "u64"
+                }
+            ]
+        },
+        "Minter": {
+            "type": "struct",
+            "fields": [
+                {
+                    "name": "payment_token",
+                    "type": "EsdtToken"
+                },
+                {
+                    "name": "token_price",
+                    "type": "BigUint"
+                },
+                {
+                    "name": "token_type",
+                    "type": "EgldOrEsdtTokenIdentifier"
+                },
+                {
+                    "name": "token_name",
+                    "type": "bytes"
+                },
+                {
+                    "name": "base_cid",
+                    "type": "bytes"
+                },
+                {
+                    "name": "is_paused",
+                    "type": "bool"
+                },
+                {
+                    "name": "mint_start_time",
+                    "type": "Option<u64>"
+                },
+                {
+                    "name": "is_allow_list_enabled",
+                    "type": "bool"
+                },
+                {
+                    "name": "is_shuffled",
+                    "type": "bool"
+                },
+                {
+                    "name": "total_token_loaded",
+                    "type": "u32"
+                },
+                {
+                    "name": "is_initial_indexes_populate_done",
+                    "type": "bool"
+                },
+                {
+                    "name": "can_create",
+                    "type": "bool"
+                },
+                {
+                    "name": "total_token",
+                    "type": "u32"
+                },
+                {
+                    "name": "total_token_left",
+                    "type": "u32"
+                },
+                {
+                    "name": "total_token_minted",
+                    "type": "u32"
+                },
+                {
+                    "name": "limit_per_address_total",
+                    "type": "u32"
+                },
+                {
+                    "name": "is_registered",
+                    "type": "bool"
+                },
+                {
+                    "name": "drop",
+                    "type": "Option<Drop>"
+                }
+            ]
+        },
+        "Shareholder": {
+            "type": "struct",
+            "fields": [
+                {
+                    "name": "address",
+                    "type": "Address"
+                },
+                {
+                    "name": "percentage",
+                    "type": "u64"
+                }
+            ]
+        }
+    }
+}
