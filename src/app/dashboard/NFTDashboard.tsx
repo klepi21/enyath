@@ -44,7 +44,7 @@ export default function NFTDashboard() {
       // Convert the selected token to Hex
       const hexToken = Buffer.from(selectedToken, 'utf8').toString('hex'); // Convert selectedToken to Hex
 
-      const txData = `claimTokens@${hexToken}`; // Prepare transaction data
+      const txData = `claimTokens@${hexToken}@`; // Prepare transaction data
 
       const claimTransaction = newTransaction({
         value: 0, // Assuming no value is sent for the claim
