@@ -97,8 +97,11 @@ export default function NFTDashboard() {
     if (inputAddress) {
       // Convert the input address to Hex
       const hexAddress = Address.fromBech32(inputAddress) // Convert inputAddress to Hex
+      console.log(hexAddress.hex());
 
-      const hexArguments = `giveaway@${hexAddress}@${amountOfTokens.toString(16).padStart(2, '0')}`;
+
+
+      const hexArguments = `giveaway@${hexAddress.hex()}@${amountOfTokens.toString(16).padStart(2, '0')}`;
 
       const giveawayTransaction = newTransaction({
         value: 0, // Assuming no value is sent for the giveaway
