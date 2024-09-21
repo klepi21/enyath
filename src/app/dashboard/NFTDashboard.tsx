@@ -17,6 +17,7 @@ import { newTransaction } from '@/helpers/sdkDappHelpers';
 import { Address } from '@multiversx/sdk-core';
 import { GAS_PRICE, VERSION } from '@/localConstants';
 
+
 export default function NFTDashboard() {
   const [activeTab, setActiveTab] = useState("account")
   const [lastMints, setLastMints] = useState<{ sender: string; value: string; timestamp: number; txHash: string; }[]>([]); // Define the type for lastMints
@@ -95,7 +96,7 @@ export default function NFTDashboard() {
 
     if (inputAddress) {
       // Convert the input address to Hex
-      const hexAddress = Buffer.from(inputAddress, 'utf8').toString('hex'); // Convert inputAddress to Hex
+      const hexAddress = Address.fromBech32(inputAddress) // Convert inputAddress to Hex
 
       const hexArguments = `giveaway@${hexAddress}@${amountOfTokens.toString(16).padStart(2, '0')}`;
 
