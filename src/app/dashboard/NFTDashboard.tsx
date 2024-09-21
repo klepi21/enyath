@@ -102,7 +102,7 @@ export default function NFTDashboard() {
       const giveawayTransaction = newTransaction({
         value: 0, // Assuming no value is sent for the giveaway
         data: hexArguments,
-        receiver: contractAddress2, // Replace with your contract address
+        receiver: 'erd1qqqqqqqqqqqqqpgqd82usd8f4wcu0z70qs0jskpm2wtgeamz9s2q4s7yja', // Replace with your contract address
         gasLimit: 60000000,
         gasPrice: GAS_PRICE,
         chainID: network.chainId,
