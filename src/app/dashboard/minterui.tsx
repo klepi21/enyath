@@ -25,6 +25,7 @@ import { FaTwitter, FaTelegram, FaDiscord, FaSitemap } from 'react-icons/fa';
 import { motion, AnimatePresence } from 'framer-motion';
 import LinearProgress from '@mui/material/LinearProgress';
 import NFTDashboard from './NFTDashboard';
+import BigNumber from 'bignumber.js'; // Ensure you have BigNumber imported
 
 export default function Component() {
   const [quantity, setQuantity] = useState(1)
@@ -54,8 +55,12 @@ export default function Component() {
   const handleMint = async () => {
     if (minterInfo) {
       const amountOfTokens = Math.max(0, quantity);
-      const pricePerNFT = BigInt(Math.floor(parseFloat(minterInfo.token_price) / 1e18)); // Convert to BigInt
-      const valueToSend = pricePerNFT * BigInt(amountOfTokens); // Use BigInt for multiplication
+
+      // Convert token price to BigNumber, divide by 1e18, and then convert to BigInt
+      const pricePerNFT = new BigNumber(minterInfo.token_price).dividedBy(1e18).toString(); // Divide by 1e18
+      const pricePerNFTBigInt = BigInt(pricePerNFT); // Convert to BigInt
+
+      const valueToSend = pricePerNFTBigInt * BigInt(amountOfTokens); // Use BigInt for multiplication
 
       const hexArguments = `mint@${amountOfTokens.toString(16).padStart(2, '0')}`;
 
