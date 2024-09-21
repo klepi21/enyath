@@ -39,7 +39,7 @@ export default function Component() {
   const totalSupply = minterInfo ? parseInt(minterInfo.total_token) : 0;
   const mintedSoFar = minterInfo ? parseInt(minterInfo.total_token_minted) : 0;
   const limitPerAddressTotal = minterInfo ? minterInfo.limit_per_address_total : 0;
-  const pricePerNFT = minterInfo ? parseFloat(minterInfo.token_price) / 1e18 : 0;
+  const pricePerNFT = minterInfo ? Number(minterInfo.token_price) / 1e18 : 0; // Ensure token_price is a number
   const totalPrice = quantity * pricePerNFT;
 
   const truncateToTwoDecimals = (num: number) => Math.floor(num * 100) / 100;
@@ -56,11 +56,12 @@ export default function Component() {
     if (minterInfo) {
       const amountOfTokens = Math.max(0, quantity);
 
-      // Convert token price to BigNumber, divide by 1e18, and then convert to BigInt
-      const pricePerNFT = new BigNumber(minterInfo.token_price).dividedBy(1e18).toString(); // Divide by 1e18
-      const pricePerNFTBigInt = BigInt(pricePerNFT); // Convert to BigInt
+      // Convert token price to BigNumber, multiply by 1e18 to get wei, and then convert to BigInt
+      const pricePerNFT = Number(minterInfo.token_price) / 1e18; // Ensure token_price is a number
+      console.log(pricePerNFT); // Convert to BigNumber in wei
 
-      const valueToSend = pricePerNFTBigInt * BigInt(amountOfTokens); // Use BigInt for multiplication
+      const valueToSend = pricePerNFT * amountOfTokens; // Convert pricePerNFTBigInt to BigInt
+      console.log(valueToSend);
 
       const hexArguments = `mint@${amountOfTokens.toString(16).padStart(2, '0')}`;
 
