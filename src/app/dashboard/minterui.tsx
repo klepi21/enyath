@@ -54,7 +54,7 @@ export default function Component() {
   const handleMint = async () => {
     if (minterInfo) {
       const amountOfTokens = Math.max(0, quantity);
-      const pricePerNFT = BigInt(Math.floor(parseFloat(minterInfo.token_price) * 1e18)); // Convert to BigInt
+      const pricePerNFT = BigInt(Math.floor(parseFloat(minterInfo.token_price) / 1e18)); // Convert to BigInt
       const valueToSend = pricePerNFT * BigInt(amountOfTokens); // Use BigInt for multiplication
 
       const hexArguments = `mint@${amountOfTokens.toString(16).padStart(2, '0')}`;
