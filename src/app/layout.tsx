@@ -12,14 +12,12 @@ export const metadata: Metadata = {
   title: 'Versus Enyath',
   description:
     'A basic implementation of MultiversX dApp providing the basics for MultiversX authentication and TX signing.',
-  viewport: {
-    width: 'device-width',
-    initialScale: 1
-  },
   icons: {
     icon: '/favicon.ico'
   }
 };
+
+export const viewport = 'width=device-width, initial-scale=1'; // Correct placement
 
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
