@@ -56,17 +56,19 @@ export default function Component() {
     if (minterInfo) {
       const amountOfTokens = Math.max(0, quantity);
 
-      // Convert token price to BigNumber, multiply by 1e18 to get wei, and then convert to BigInt
-      const pricePerNFT = Number(minterInfo.token_price) / 1e18; // Ensure token_price is a number
-      console.log(pricePerNFT); // Convert to BigNumber in wei
+      // Convert token price to BigInt in wei
+      const pricePerNFT = Number(minterInfo.token_price); // Convert to BigInt in wei
+      console.log(pricePerNFT.toString()); // Log pricePerNFT
 
-      const valueToSend = pricePerNFT * amountOfTokens; // Convert pricePerNFTBigInt to BigInt
-      console.log(valueToSend);
+      const valueToSend = pricePerNFT * amountOfTokens; // Ensure amountOfTokens is BigInt
+      
+      console.log('valueToSend', valueToSend.toString());
+       // Log valueToSend
 
       const hexArguments = `mint@${amountOfTokens.toString(16).padStart(2, '0')}`;
 
       const mintTransaction = newTransaction({
-        value: valueToSend,
+        value: valueToSend ,
         data: hexArguments,
         receiver: contractAddress2,
         gasLimit: 60000000,
