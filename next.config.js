@@ -3,7 +3,7 @@ const nextConfig = {
   // distDir: 'build', // Comment this out
   transpilePackages: ['@multiversx/sdk-dapp'],
   images: {
-    domains: ['hebbkx1anhila5yf.public.blob.vercel-storage.com', 'versus-projects.com' ,'https://versus-projects.com']
+    domains: ['hebbkx1anhila5yf.public.blob.vercel-storage.com', 'versus-projects.com' ,'https://versus-projects.com','i.ibb.co']
   },
   webpack: (config) => {
     config.resolve.fallback = { fs: false };

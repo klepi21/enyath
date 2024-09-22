@@ -115,7 +115,7 @@ export default function Component() {
             transition={{ duration: 0.5 }}
           >
             <Image 
-              src="https://versus-projects.com/assets/images/collections/versus-projects-collection-1-7.webp"
+              src="https://i.ibb.co/yyTs9wJ/IMAGE-2024-09-22-16-48-16.jpg"
               alt="Cyber Sentinel NFT" 
               layout="fill"
               objectFit="cover"

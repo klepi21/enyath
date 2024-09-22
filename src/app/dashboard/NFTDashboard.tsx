@@ -202,7 +202,18 @@ export default function NFTDashboard() {
               <TableBody>
                 {lastMints.map((mint, index) => (
                   <TableRow key={index}>
-                    <TableCell className="text-gray-300">{`${mint.sender.slice(0, 5)}...${mint.sender.slice(-5)}`}</TableCell>
+                    <TableCell className="text-gray-300">
+                      <div className="flex items-center">
+                        <span>{`${mint.sender.slice(0, 5)}...${mint.sender.slice(-5)}`}</span>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => copyToClipboard(mint.sender)}
+                        >
+                          <FaCopy />
+                        </Button>
+                      </div>
+                    </TableCell>
                     <TableCell className="text-gray-300">{Math.floor(Number(mint.value) / 555000000000000000)}</TableCell>
                     <TableCell className="text-gray-300">{formatDate(mint.timestamp)}</TableCell>
                     <TableCell>
