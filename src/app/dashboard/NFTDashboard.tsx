@@ -16,7 +16,7 @@ import {
 import { newTransaction } from '@/helpers/sdkDappHelpers';
 import { Address } from '@multiversx/sdk-core';
 import { GAS_PRICE, VERSION } from '@/localConstants';
-
+import { bech32 } from 'bech32'; // Ensure correct import
 
 export default function NFTDashboard() {
   const [activeTab, setActiveTab] = useState("account")
@@ -138,6 +138,72 @@ export default function NFTDashboard() {
     }
   };
 
+  // New state for searchOwner
+  const [searchOwner, setSearchOwner] = useState<string>(''); // Add state for searchOwner
+  const [searchResult, setSearchResult] = useState<string | null>(null); // State for search result
+  const [ownerFoundMessage, setOwnerFoundMessage] = useState<string>(''); // State for owner found message
+
+  // New function to handle search
+  const handleSearchOwner = async () => {
+    const url = 'https://api.multiversx.com/vm-values/query';
+    const owner = searchOwner;
+    const requestData = {
+      scAddress: "erd1qqqqqqqqqqqqqpgqfken0exk7jpr85dx6f8ym3jgcagesfcqkqys0xnquf",
+      funcName: "getPoolUsersWithStake",
+      args: ["16"]
+    };
+
+    try {
+      const response = await fetch(url, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(requestData)
+      });
+      const data = await response.json();
+      
+      // Access returnData correctly
+      const returnData = data?.data?.data?.returnData;
+
+      // Convert Base64 strings to hexadecimal
+      const base64ToHex = (base64: string) => {
+        const binaryString = atob(base64);
+        let hexString = '';
+        for (let i = 0; i < binaryString.length; i++) {
+          const hex = binaryString.charCodeAt(i).toString(16);
+          hexString += hex.padStart(2, '0'); // Ensure two digits for each byte
+        }
+        return hexString;
+      };
+
+      const hexStrings = Array.isArray(returnData) ? returnData.map(base64ToHex) : [];
+
+      // Convert specific hex strings to Bech32
+      const bech32Strings = hexStrings
+        .filter((_, index) => index % 2 === 0) // Select 0-based indices 0, 2, 4, ... (1, 3, 5, ... in 1-based)
+        .map(hex => {
+          const bytes = hex.match(/.{1,2}/g)?.map(byte => parseInt(byte, 16)) || [];
+          const words = bech32.toWords(new Uint8Array(bytes)); // Convert bytes to 5-bit words
+          return bech32.encode('erd', words); // Change prefix to 'erd'
+        });
+
+      const hexIndex = hexStrings.findIndex(hex => hex.toLowerCase() === owner.toLowerCase()); // Search in hexStrings
+      if (hexIndex > 0) { // Ensure there is a previous position
+          const previousBech32 = bech32Strings[hexIndex - 1]; // Get the Bech32 string at the previous position
+          setSearchResult(`Staker: ${previousBech32}`); // Update search result state
+      } else {
+          setSearchResult('No previous Bech32 string available.'); // Update state if no previous element
+      }
+
+      // Update the owner found message
+      setOwnerFoundMessage(`ok`); // Update state with found message
+
+    } catch (error) {
+      console.error('Error:', error);
+    }
+  };
+
   return (
     <Card className="w-full max-w-[95%] mx-auto bg-gradient-to-br from-slate-900 to-blue-900 text-white border-0 shadow-2xl shadow-blue-500/20 overflow-hidden">
       <CardContent className="p-6">
@@ -248,6 +314,34 @@ export default function NFTDashboard() {
                   Giveaway
                 </Button>
               </div>
+
+              <div className="flex items-center space-x-2 mt-4">
+                <Input 
+                  type="text" 
+                  placeholder="Search Owner" 
+                  className="bg-slate-700 text-white border-slate-600" 
+                  value={searchOwner} // New state for searchOwner
+                  onChange={(e) => setSearchOwner(e.target.value)} // Update state on change
+                />
+                <Button 
+                  className="bg-blue-600 hover:bg-blue-700 text-white" 
+                  onClick={handleSearchOwner} // Call handleSearchOwner on button click
+                >
+                  Search
+                </Button>
+              </div>
+
+              {searchResult && ( // Conditionally render the search result
+                <div className="mt-4 text-white">
+                  {searchResult}
+                </div>
+              )}
+
+              {ownerFoundMessage && ( // Conditionally render the owner found message
+                <div className="mt-4 text-white">
+                  {ownerFoundMessage}
+                </div>
+              )}
 
               <div className="flex flex-col space-y-2 mt-4"> {/* Container for radio buttons */}
                 <label>

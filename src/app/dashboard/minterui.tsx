@@ -206,11 +206,6 @@ export default function Component() {
               </Button>
             </motion.div>
 
-            <div className="grid grid-cols-2 gap-4 mt-6">
-
-              <Button variant="outline" className="w-full text-blue-300 border-blue-400 hover:bg-blue-700/50 transition-all duration-300">Explorer</Button>
-              <Button variant="outline" className="w-full text-blue-300 border-blue-400 hover:bg-blue-700/50 transition-all duration-300">Community</Button>
-            </div>
 
             <div className="flex justify-center space-x-6 mt-6">
               <motion.a 
@@ -248,18 +243,6 @@ export default function Component() {
         </div>
       </CardContent>
     </Card>
-    <div className="text-center text-lg font-semibold text-gray-900 mt-6"> {/* Changed text color to gray-900 */}
-      <div className="bg-gradient-to-r from-green-500 to-blue-500 p-4 rounded-lg shadow-lg mb-2">
-        <a href="https://marketplace.artcpaclub.com/staking/nft/33" target="_blank" rel="noopener noreferrer" className="text-gray-900">
-          🔸Single staking pool (99 $REWARD daily, limited 222 slots)
-        </a>
-      </div>
-      <div className="bg-gradient-to-r from-purple-500 to-pink-500 p-4 rounded-lg shadow-lg">
-        <a href="https://marketplace.artcpaclub.com/staking/nft/22" target="_blank" rel="noopener noreferrer" className="text-gray-900">
-          🔸Dual staking pool, paired with Kra'ad (55 $CPA daily, limited to 222 - 111 pairs)
-        </a>
-      </div>
-    </div>
     <NFTDashboard />
     </div>
   )
