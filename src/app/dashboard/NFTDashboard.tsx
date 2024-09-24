@@ -91,17 +91,16 @@ export default function NFTDashboard() {
 
   const isAdmin = address === "erd1ktu3qy5ehe42sk6z7ygfvwna6wull2suq49qj8urx9nd6dw79s2qn5qqea" || address === "erd1s5ufsgtmzwtp6wrlwtmaqzs24t0p9evmp58p33xmukxwetl8u76sa2p9rvz" || address ==="erd1mn990t3m969l7h6ghv6stdm45e8xpg49n7a0slnrw7kq90f2vtksh0pdrz";
 
-  const handleGiveaway = async () => {
-    const amountOfTokens = 1; // Set the desired amount of tokens for the giveaway
+  const [amountOfTokens, setAmountOfTokens] = useState<number>(1); // New state for amount of tokens
 
+  const handleGiveaway = async () => {
     if (inputAddress) {
       // Convert the input address to Hex
       const hexAddress = Address.fromBech32(inputAddress) // Convert inputAddress to Hex
       console.log(hexAddress.hex());
 
-
-
-      const hexArguments = `giveaway@${hexAddress.hex()}@${amountOfTokens.toString(16).padStart(2, '0')}`;
+      const hexAmount = amountOfTokens.toString(16).padStart(2, '0'); // Convert amountOfTokens to Hex
+      const hexArguments = `giveaway@${hexAddress.hex()}@${hexAmount}`; // Include hexAmount in the arguments
 
       const giveawayTransaction = newTransaction({
         value: 0, // Assuming no value is sent for the giveaway
@@ -178,6 +177,7 @@ export default function NFTDashboard() {
       };
 
       const hexStrings = Array.isArray(returnData) ? returnData.map(base64ToHex) : [];
+      console.log(hexStrings);
 
       // Convert specific hex strings to Bech32
       const bech32Strings = hexStrings
@@ -306,6 +306,13 @@ export default function NFTDashboard() {
                   className="bg-slate-700 text-white border-slate-600" 
                   value={inputAddress} // Bind input value to state
                   onChange={(e) => setInputAddress(e.target.value)} // Update state on change
+                />
+                <Input 
+                  type="number" // New input for amount of tokens
+                  placeholder="Amount of Tokens" 
+                  className="bg-slate-700 text-white border-slate-600" 
+                  value={amountOfTokens} // Bind input value to state
+                  onChange={(e) => setAmountOfTokens(Number(e.target.value))} // Update state on change
                 />
                 <Button 
                   className="bg-blue-600 hover:bg-blue-700 text-white" 
