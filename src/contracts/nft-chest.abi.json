@@ -1,0 +1,205 @@
+{
+    "buildInfo": {
+        "rustc": {
+            "version": "1.63.0-nightly",
+            "commitHash": "cacc75c82ebe15cf63d31034fcf7f1016cddf0e2",
+            "commitDate": "2022-06-16",
+            "channel": "Nightly",
+            "short": "rustc 1.63.0-nightly (cacc75c82 2022-06-16)"
+        },
+        "contractCrate": {
+            "name": "nft-chest",
+            "version": "1.1.0",
+            "git_version": "b22e5dab3-modified"
+        },
+        "framework": {
+            "name": "elrond-wasm",
+            "version": "0.34.1"
+        }
+    },
+    "name": "NftLootbox",
+    "constructor": {
+        "inputs": [
+            {
+                "name": "accepted_payment_token",
+                "type": "EgldOrEsdtTokenIdentifier"
+            },
+            {
+                "name": "accepted_payment_token_nonce",
+                "type": "u64"
+            },
+            {
+                "name": "selling_price",
+                "type": "BigUint"
+            },
+            {
+                "name": "funder_address",
+                "type": "Address"
+            },
+            {
+                "name": "marketplace_cut_percentage",
+                "type": "u64"
+            }
+        ],
+        "outputs": []
+    },
+    "endpoints": [
+        {
+            "name": "addNft",
+            "onlyOwner": true,
+            "mutability": "mutable",
+            "payableInTokens": [
+                "*"
+            ],
+            "inputs": [],
+            "outputs": []
+        },
+        {
+            "name": "addSft",
+            "onlyOwner": true,
+            "mutability": "mutable",
+            "payableInTokens": [
+                "*"
+            ],
+            "inputs": [
+                {
+                    "name": "amount",
+                    "type": "u64"
+                }
+            ],
+            "outputs": []
+        },
+        {
+            "name": "pause",
+            "onlyOwner": true,
+            "mutability": "mutable",
+            "inputs": [],
+            "outputs": []
+        },
+        {
+            "name": "start",
+            "onlyOwner": true,
+            "mutability": "mutable",
+            "inputs": [],
+            "outputs": []
+        },
+        {
+            "name": "setNewPrice",
+            "onlyOwner": true,
+            "mutability": "mutable",
+            "inputs": [
+                {
+                    "name": "accepted_payment_token",
+                    "type": "EgldOrEsdtTokenIdentifier"
+                },
+                {
+                    "name": "accepted_payment_token_nonce",
+                    "type": "u64"
+                },
+                {
+                    "name": "selling_price",
+                    "type": "BigUint"
+                }
+            ],
+            "outputs": []
+        },
+        {
+            "name": "claim",
+            "onlyOwner": true,
+            "mutability": "mutable",
+            "inputs": [
+                {
+                    "name": "amount_of_tokens",
+                    "type": "u32"
+                }
+            ],
+            "outputs": []
+        },
+        {
+            "name": "register",
+            "onlyOwner": true,
+            "mutability": "mutable",
+            "payableInTokens": [
+                "EGLD"
+            ],
+            "inputs": [],
+            "outputs": []
+        },
+        {
+            "name": "mint",
+            "mutability": "mutable",
+            "payableInTokens": [
+                "*"
+            ],
+            "inputs": [
+                {
+                    "name": "amount_of_tokens",
+                    "type": "u32"
+                }
+            ],
+            "outputs": []
+        },
+        {
+            "name": "getVersion",
+            "mutability": "readonly",
+            "inputs": [],
+            "outputs": [
+                {
+                    "type": "u32"
+                }
+            ]
+        },
+        {
+            "name": "getChestInformation",
+            "mutability": "readonly",
+            "inputs": [],
+            "outputs": [
+                {
+                    "type": "Chest"
+                }
+            ]
+        }
+    ],
+    "events": [],
+    "hasCallback": false,
+    "types": {
+        "Chest": {
+            "type": "struct",
+            "fields": [
+                {
+                    "name": "payment_token",
+                    "type": "EsdtToken"
+                },
+                {
+                    "name": "token_price",
+                    "type": "BigUint"
+                },
+                {
+                    "name": "is_paused",
+                    "type": "bool"
+                },
+                {
+                    "name": "total_token_left",
+                    "type": "u32"
+                },
+                {
+                    "name": "is_registered",
+                    "type": "bool"
+                }
+            ]
+        },
+        "EsdtToken": {
+            "type": "struct",
+            "fields": [
+                {
+                    "name": "token_type",
+                    "type": "EgldOrEsdtTokenIdentifier"
+                },
+                {
+                    "name": "nonce",
+                    "type": "u64"
+                }
+            ]
+        }
+    }
+}

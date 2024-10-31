@@ -204,11 +204,34 @@ export default function NFTDashboard() {
     }
   };
 
+  // New state for MD Snapshots
+  const [mdSnapshots, setMdSnapshots] = useState<{ sender: string; identifier: string; }[]>([]); // State for MD Snapshots
+
+  // Fetch MD Snapshots data
+  useEffect(() => {
+    const fetchMdSnapshots = async () => {
+      try {
+        const response = await fetch("https://api.multiversx.com/accounts/erd1qqqqqqqqqqqqqpgq5re66vt0dlee8v83dtyh6k54qqpjs3ketxfq9tcd29/transfers?size=500&token=VRSENYATH2-6b632c");
+        const data = await response.json();
+        const snapshots = data.map((tx: any) => {
+          const sender = tx.sender;
+          const identifier = tx.action.arguments.transfers[0]?.identifier || '';
+          return { sender, identifier };
+        });
+        setMdSnapshots(snapshots);
+      } catch (error) {
+        console.error("Error fetching MD Snapshots:", error);
+      }
+    };
+
+    fetchMdSnapshots();
+  }, []);
+
   return (
     <Card className="w-full max-w-[95%] mx-auto bg-gradient-to-br from-slate-900 to-blue-900 text-white border-0 shadow-2xl shadow-blue-500/20 overflow-hidden">
       <CardContent className="p-6">
         <Tabs defaultValue="account" className="w-full">
-          <TabsList className="grid w-full grid-cols-3 bg-transparent rounded-full p-2">
+          <TabsList className="grid w-full grid-cols-4 bg-transparent rounded-full p-2"> {/* Updated grid-cols to 4 */}
             <TabsTrigger 
               value="account"
               className="data-[state=active]:bg-blue-600 data-[state=active]:text-white flex items-center"
@@ -222,12 +245,20 @@ export default function NFTDashboard() {
               <FaHistory className="mr-2" /> Last Mints
             </TabsTrigger>
             {isAdmin && (
-              <TabsTrigger 
-                value="admin"
-                className="data-[state=active]:bg-blue-600 data-[state=active]:text-white flex items-center"
-              >
-                <FaCog className="mr-2" /> Admin Panel
-              </TabsTrigger>
+              <>
+                <TabsTrigger 
+                  value="admin"
+                  className="data-[state=active]:bg-blue-600 data-[state=active]:text-white flex items-center"
+                >
+                  <FaCog className="mr-2" /> Admin Panel
+                </TabsTrigger>
+                <TabsTrigger 
+                  value="mdSnapshot"
+                  className="data-[state=active]:bg-blue-600 data-[state=active]:text-white flex items-center"
+                >
+                  MD Snapshot
+                </TabsTrigger>
+              </>
             )}
           </TabsList>
           <TabsContent value="account" className="space-y-4 mt-4">
@@ -298,86 +329,117 @@ export default function NFTDashboard() {
             </Table>
           </TabsContent>
           {isAdmin && (
-            <TabsContent value="admin" className="space-y-4 mt-4">
-              <div className="flex items-center space-x-2">
-                <Input 
-                  type="text" 
-                  placeholder="Enter address" 
-                  className="bg-slate-700 text-white border-slate-600" 
-                  value={inputAddress} // Bind input value to state
-                  onChange={(e) => setInputAddress(e.target.value)} // Update state on change
-                />
-                <Input 
-                  type="number" // New input for amount of tokens
-                  placeholder="Amount of Tokens" 
-                  className="bg-slate-700 text-white border-slate-600" 
-                  value={amountOfTokens} // Bind input value to state
-                  onChange={(e) => setAmountOfTokens(Number(e.target.value))} // Update state on change
-                />
-                <Button 
-                  className="bg-blue-600 hover:bg-blue-700 text-white" 
-                  onClick={handleGiveaway} // Call handleGiveaway on button click
-                >
-                  Giveaway
-                </Button>
-              </div>
-
-              <div className="flex items-center space-x-2 mt-4">
-                <Input 
-                  type="text" 
-                  placeholder="Search Owner" 
-                  className="bg-slate-700 text-white border-slate-600" 
-                  value={searchOwner} // New state for searchOwner
-                  onChange={(e) => setSearchOwner(e.target.value)} // Update state on change
-                />
-                <Button 
-                  className="bg-blue-600 hover:bg-blue-700 text-white" 
-                  onClick={handleSearchOwner} // Call handleSearchOwner on button click
-                >
-                  Search
-                </Button>
-              </div>
-
-              {searchResult && ( // Conditionally render the search result
-                <div className="mt-4 text-white">
-                  {searchResult}
-                </div>
-              )}
-
-              {ownerFoundMessage && ( // Conditionally render the owner found message
-                <div className="mt-4 text-white">
-                  {ownerFoundMessage}
-                </div>
-              )}
-
-              <div className="flex flex-col space-y-2 mt-4"> {/* Container for radio buttons */}
-                <label>
-                  <input 
-                    type="radio" 
-                    value="EGLD" 
-                    checked={selectedToken === 'EGLD'} 
-                    onChange={() => setSelectedToken('EGLD')} 
+            <>
+              <TabsContent value="admin" className="space-y-4 mt-4">
+                <div className="flex items-center space-x-2">
+                  <Input 
+                    type="text" 
+                    placeholder="Enter address" 
+                    className="bg-slate-700 text-white border-slate-600" 
+                    value={inputAddress} // Bind input value to state
+                    onChange={(e) => setInputAddress(e.target.value)} // Update state on change
                   />
-                  EGLD
-                </label>
-                <label>
-                  <input 
-                    type="radio" 
-                    value="LXOXNO-0eb983" 
-                    checked={selectedToken === 'LXOXNO-0eb983'} 
-                    onChange={() => setSelectedToken('LXOXNO-0eb983')} 
+                  <Input 
+                    type="number" // New input for amount of tokens
+                    placeholder="Amount of Tokens" 
+                    className="bg-slate-700 text-white border-slate-600" 
+                    value={amountOfTokens} // Bind input value to state
+                    onChange={(e) => setAmountOfTokens(Number(e.target.value))} // Update state on change
                   />
-                  LXOXNO-0eb983
-                </label>
-              </div>
+                  <Button 
+                    className="bg-blue-600 hover:bg-blue-700 text-white" 
+                    onClick={handleGiveaway} // Call handleGiveaway on button click
+                  >
+                    Giveaway
+                  </Button>
+                </div>
 
-              <Button 
-                className="bg-blue-600 hover:bg-blue-700 text-white mt-2" 
-                onClick={handleClaim} // Call handleClaim on button click
-              >
-                Claim
-              </Button>
-            </TabsContent>
+                <div className="flex items-center space-x-2 mt-4">
+                  <Input 
+                    type="text" 
+                    placeholder="Search Owner" 
+                    className="bg-slate-700 text-white border-slate-600" 
+                    value={searchOwner} // New state for searchOwner
+                    onChange={(e) => setSearchOwner(e.target.value)} // Update state on change
+                  />
+                  <Button 
+                    className="bg-blue-600 hover:bg-blue-700 text-white" 
+                    onClick={handleSearchOwner} // Call handleSearchOwner on button click
+                  >
+                    Search
+                  </Button>
+                </div>
+
+                {searchResult && ( // Conditionally render the search result
+                  <div className="mt-4 text-white">
+                    {searchResult}
+                  </div>
+                )}
+
+                {ownerFoundMessage && ( // Conditionally render the owner found message
+                  <div className="mt-4 text-white">
+                    {ownerFoundMessage}
+                  </div>
+                )}
+
+                <div className="flex flex-col space-y-2 mt-4"> {/* Container for radio buttons */}
+                  <label>
+                    <input 
+                      type="radio" 
+                      value="EGLD" 
+                      checked={selectedToken === 'EGLD'} 
+                      onChange={() => setSelectedToken('EGLD')} 
+                    />
+                    EGLD
+                  </label>
+                  <label>
+                    <input 
+                      type="radio" 
+                      value="LXOXNO-0eb983" 
+                      checked={selectedToken === 'LXOXNO-0eb983'} 
+                      onChange={() => setSelectedToken('LXOXNO-0eb983')} 
+                    />
+                    LXOXNO-0eb983
+                  </label>
+                </div>
+
+                <Button 
+                  className="bg-blue-600 hover:bg-blue-700 text-white mt-2" 
+                  onClick={handleClaim} // Call handleClaim on button click
+                >
+                  Claim
+                </Button>
+              </TabsContent>
+
+              {/* New MD Snapshot Tab Content */}
+              <TabsContent value="mdSnapshot" className="mt-4">
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead className="text-white">Sender</TableHead>
+                      <TableHead className="text-white">Identifier</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {mdSnapshots.map((snapshot, index) => (
+                      <TableRow key={index}>
+                        <TableCell className="text-gray-300 flex items-center">
+                          <span>{`${snapshot.sender.slice(0, 5)}...${snapshot.sender.slice(-5)}`}</span>
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => copyToClipboard(snapshot.sender)}
+                          >
+                            <FaCopy />
+                          </Button>
+                        </TableCell>
+                        <TableCell className="text-gray-300">{snapshot.identifier}</TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </TabsContent>
+            </>
           )}
         </Tabs>
       </CardContent>
