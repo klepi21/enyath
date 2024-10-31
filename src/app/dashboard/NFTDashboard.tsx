@@ -2,7 +2,7 @@
 
 "use client"
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useMemo } from 'react'
 import { useGetAccountInfo } from '@/hooks/sdkDappHooks';
 import { Card, CardContent } from "@/styles/ui/card"
 import { Button } from "@/styles/ui/button"
@@ -65,6 +65,11 @@ interface Transaction {
   function: string;
   action: Action;
   type: string;
+}
+
+interface GroupedMdSnapshot {
+  sender: string;
+  identifiers: string[];
 }
 
 export default function NFTDashboard() {
@@ -276,6 +281,32 @@ export default function NFTDashboard() {
     fetchMdSnapshots();
   }, []);
 
+  // New state for searchIdentifier
+  const [searchIdentifier, setSearchIdentifier] = useState<string>(''); // Add state for searchIdentifier
+
+  // Grouped MD Snapshots based on sender and searchIdentifier
+  const groupedMdSnapshots: GroupedMdSnapshot[] = useMemo(() => {
+    // Filter based on searchIdentifier if provided
+    const filtered = searchIdentifier 
+      ? mdSnapshots.filter(snapshot => snapshot.identifier.toLowerCase().includes(searchIdentifier.toLowerCase()))
+      : mdSnapshots;
+
+    // Group by sender
+    const groups: { [sender: string]: string[] } = {};
+    filtered.forEach(snapshot => {
+      if (!groups[snapshot.sender]) {
+        groups[snapshot.sender] = [];
+      }
+      groups[snapshot.sender].push(snapshot.identifier);
+    });
+
+    // Convert to array of GroupedMdSnapshot
+    return Object.keys(groups).map(sender => ({
+      sender,
+      identifiers: groups[sender]
+    }));
+  }, [mdSnapshots, searchIdentifier]);
+
   return (
     <Card className="w-full max-w-[95%] mx-auto bg-gradient-to-br from-slate-900 to-blue-900 text-white border-0 shadow-2xl shadow-blue-500/20 overflow-hidden">
       <CardContent className="p-6">
@@ -462,31 +493,56 @@ export default function NFTDashboard() {
 
               {/* New MD Snapshot Tab Content */}
               <TabsContent value="mdSnapshot" className="mt-4">
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead className="text-white">Sender</TableHead>
-                      <TableHead className="text-white">Identifier</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {mdSnapshots.map((snapshot, index) => (
-                      <TableRow key={index}>
-                        <TableCell className="text-gray-300 flex items-center">
-                          <span>{`${snapshot.sender.slice(0, 5)}...${snapshot.sender.slice(-5)}`}</span>
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            onClick={() => copyToClipboard(snapshot.sender)}
-                          >
-                            <FaCopy />
-                          </Button>
-                        </TableCell>
-                        <TableCell className="text-gray-300">{snapshot.identifier}</TableCell>
+                {/* Search Bar for Identifier */}
+                <div className="flex items-center space-x-2 mb-4">
+                  <Input 
+                    type="text" 
+                    placeholder="Search Identifier" 
+                    className="bg-slate-700 text-white border-slate-600" 
+                    value={searchIdentifier}
+                    onChange={(e) => setSearchIdentifier(e.target.value)}
+                  />
+                  <Button 
+                    className="bg-blue-600 hover:bg-blue-700 text-white" 
+                    onClick={() => setSearchIdentifier('')} // Clear search
+                  >
+                    Clear
+                  </Button>
+                </div>
+
+                {groupedMdSnapshots.length > 0 ? (
+                  <Table>
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead className="text-white">Sender</TableHead>
+                        <TableHead className="text-white">Identifiers</TableHead>
                       </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
+                    </TableHeader>
+                    <TableBody>
+                      {groupedMdSnapshots.map((group, index) => (
+                        <TableRow key={index}>
+                          <TableCell className="text-gray-300 flex items-center">
+                            <span>{`${group.sender.slice(0, 5)}...${group.sender.slice(-5)}`}</span>
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              onClick={() => copyToClipboard(group.sender)}
+                            >
+                              <FaCopy />
+                            </Button>
+                          </TableCell>
+                          <TableCell className="text-gray-300">
+                            {group.identifiers.map((id, idx) => (
+                              <div key={idx}>{id}</div>
+                            ))}
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                ) : (
+                  <div className="text-gray-300">No MD Snapshots found.</div>
+                )}
               </TabsContent>
             </>
           )}
