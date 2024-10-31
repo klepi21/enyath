@@ -196,7 +196,10 @@ export default function NFTDashboard() {
   const [searchResult, setSearchResult] = useState<string | null>(null); // State for search result
   const [ownerFoundMessage, setOwnerFoundMessage] = useState<string>(''); // State for owner found message
 
-  // New function to handle search
+  // New state for identifier search
+  const [searchIdentifier, setSearchIdentifier] = useState<string>(''); // Add state for searchIdentifier
+
+  // New function to handle searchOwner
   const handleSearchOwner = async () => {
     const url = 'https://api.multiversx.com/vm-values/query';
     const owner = searchOwner;
@@ -215,7 +218,7 @@ export default function NFTDashboard() {
         body: JSON.stringify(requestData)
       });
       const data = await response.json();
-      
+
       // Access returnData correctly
       const returnData = data?.data?.data?.returnData;
 
@@ -244,10 +247,10 @@ export default function NFTDashboard() {
 
       const hexIndex = hexStrings.findIndex(hex => hex.toLowerCase() === owner.toLowerCase()); // Search in hexStrings
       if (hexIndex > 0) { // Ensure there is a previous position
-          const previousBech32 = bech32Strings[hexIndex - 1]; // Get the Bech32 string at the previous position
-          setSearchResult(`Staker: ${previousBech32}`); // Update search result state
+        const previousBech32 = bech32Strings[hexIndex - 1]; // Get the Bech32 string at the previous position
+        setSearchResult(`Staker: ${previousBech32}`); // Update search result state
       } else {
-          setSearchResult('No previous Bech32 string available.'); // Update state if no previous element
+        setSearchResult('No previous Bech32 string available.'); // Update state if no previous element
       }
 
       // Update the owner found message
@@ -281,9 +284,6 @@ export default function NFTDashboard() {
     fetchMdSnapshots();
   }, []);
 
-  // New state for searchIdentifier
-  const [searchIdentifier, setSearchIdentifier] = useState<string>(''); // Add state for searchIdentifier
-
   // Grouped MD Snapshots based on sender and searchIdentifier
   const groupedMdSnapshots: GroupedMdSnapshot[] = useMemo(() => {
     // Filter based on searchIdentifier if provided
@@ -311,16 +311,17 @@ export default function NFTDashboard() {
     <Card className="w-full max-w-[95%] mx-auto bg-gradient-to-br from-slate-900 to-blue-900 text-white border-0 shadow-2xl shadow-blue-500/20 overflow-hidden">
       <CardContent className="p-6">
         <Tabs defaultValue="account" className="w-full">
-          <TabsList className="grid w-full grid-cols-4 bg-transparent rounded-full p-2"> {/* Updated grid-cols to 4 */}
+          <TabsList className="flex flex-wrap sm:flex-nowrap overflow-x-auto sm:overflow-visible bg-transparent rounded-full p-2 space-x-2 sm:space-x-0">
+            {/* Existing Tabs */}
             <TabsTrigger 
               value="account"
-              className="data-[state=active]:bg-blue-600 data-[state=active]:text-white flex items-center"
+              className="data-[state=active]:bg-blue-600 data-[state=active]:text-white flex items-center whitespace-nowrap"
             >
               <FaUser className="mr-2" /> My Account
             </TabsTrigger>
             <TabsTrigger 
               value="lastMints"
-              className="data-[state=active]:bg-blue-600 data-[state=active]:text-white flex items-center"
+              className="data-[state=active]:bg-blue-600 data-[state=active]:text-white flex items-center whitespace-nowrap"
             >
               <FaHistory className="mr-2" /> Last Mints
             </TabsTrigger>
@@ -328,13 +329,13 @@ export default function NFTDashboard() {
               <>
                 <TabsTrigger 
                   value="admin"
-                  className="data-[state=active]:bg-blue-600 data-[state=active]:text-white flex items-center"
+                  className="data-[state=active]:bg-blue-600 data-[state=active]:text-white flex items-center whitespace-nowrap"
                 >
                   <FaCog className="mr-2" /> Admin Panel
                 </TabsTrigger>
                 <TabsTrigger 
                   value="mdSnapshot"
-                  className="data-[state=active]:bg-blue-600 data-[state=active]:text-white flex items-center"
+                  className="data-[state=active]:bg-blue-600 data-[state=active]:text-white flex items-center whitespace-nowrap"
                 >
                   MD Snapshot
                 </TabsTrigger>
@@ -342,9 +343,9 @@ export default function NFTDashboard() {
             )}
           </TabsList>
           <TabsContent value="account" className="space-y-4 mt-4">
-            <div className="flex items-center justify-between">
+            <div className="flex flex-col sm:flex-row items-center justify-between">
               <span>Your address:</span>
-              <div className="flex items-center">
+              <div className="flex items-center mt-2 sm:mt-0">
                 <span className="mr-2">{`${address.slice(0, 5)}...${address.slice(-5)}`}</span>
                 <Button
                   variant="ghost"
@@ -355,7 +356,7 @@ export default function NFTDashboard() {
                 </Button>
               </div>
             </div>
-            <div className="flex items-center justify-between">
+            <div className="flex flex-col sm:flex-row items-center justify-between">
               <span>EGLD Balance:</span>
               <span>{(Number(account.balance) / 1e18).toFixed(3)}</span>
             </div>
@@ -366,8 +367,8 @@ export default function NFTDashboard() {
               Explorer <FaExternalLinkAlt className="ml-2" />
             </Button>
           </TabsContent>
-          <TabsContent value="lastMints" className="mt-4">
-            <Table>
+          <TabsContent value="lastMints" className="mt-4 overflow-x-auto">
+            <Table className="min-w-full">
               <TableHeader>
                 <TableRow>
                   <TableHead className="text-white">Minter</TableHead>
@@ -411,7 +412,7 @@ export default function NFTDashboard() {
           {isAdmin && (
             <>
               <TabsContent value="admin" className="space-y-4 mt-4">
-                <div className="flex items-center space-x-2">
+                <div className="flex flex-col sm:flex-row items-center space-y-2 sm:space-y-0 sm:space-x-2">
                   <Input 
                     type="text" 
                     placeholder="Enter address" 
@@ -427,14 +428,14 @@ export default function NFTDashboard() {
                     onChange={(e) => setAmountOfTokens(Number(e.target.value))} // Update state on change
                   />
                   <Button 
-                    className="bg-blue-600 hover:bg-blue-700 text-white" 
+                    className="w-full sm:w-auto bg-blue-600 hover:bg-blue-700 text-white" 
                     onClick={handleGiveaway} // Call handleGiveaway on button click
                   >
                     Giveaway
                   </Button>
                 </div>
 
-                <div className="flex items-center space-x-2 mt-4">
+                <div className="flex flex-col sm:flex-row items-center space-y-2 sm:space-y-0 sm:space-x-2">
                   <Input 
                     type="text" 
                     placeholder="Search Owner" 
@@ -443,7 +444,7 @@ export default function NFTDashboard() {
                     onChange={(e) => setSearchOwner(e.target.value)} // Update state on change
                   />
                   <Button 
-                    className="bg-blue-600 hover:bg-blue-700 text-white" 
+                    className="w-full sm:w-auto bg-blue-600 hover:bg-blue-700 text-white" 
                     onClick={handleSearchOwner} // Call handleSearchOwner on button click
                   >
                     Search
@@ -462,29 +463,31 @@ export default function NFTDashboard() {
                   </div>
                 )}
 
-                <div className="flex flex-col space-y-2 mt-4"> {/* Container for radio buttons */}
-                  <label>
+                <div className="flex flex-col sm:flex-row items-center space-y-2 sm:space-y-0 sm:space-x-2 mt-4"> {/* Container for radio buttons */}
+                  <label className="flex items-center">
                     <input 
                       type="radio" 
                       value="EGLD" 
                       checked={selectedToken === 'EGLD'} 
                       onChange={() => setSelectedToken('EGLD')} 
+                      className="mr-2"
                     />
                     EGLD
                   </label>
-                  <label>
+                  <label className="flex items-center">
                     <input 
                       type="radio" 
                       value="LXOXNO-0eb983" 
                       checked={selectedToken === 'LXOXNO-0eb983'} 
                       onChange={() => setSelectedToken('LXOXNO-0eb983')} 
+                      className="mr-2"
                     />
                     LXOXNO-0eb983
                   </label>
                 </div>
 
                 <Button 
-                  className="bg-blue-600 hover:bg-blue-700 text-white mt-2" 
+                  className="w-full sm:w-auto bg-blue-600 hover:bg-blue-700 text-white mt-2" 
                   onClick={handleClaim} // Call handleClaim on button click
                 >
                   Claim
@@ -494,16 +497,16 @@ export default function NFTDashboard() {
               {/* New MD Snapshot Tab Content */}
               <TabsContent value="mdSnapshot" className="mt-4">
                 {/* Search Bar for Identifier */}
-                <div className="flex items-center space-x-2 mb-4">
+                <div className="flex flex-col sm:flex-row items-center space-y-2 sm:space-y-0 sm:space-x-2 mb-4">
                   <Input 
                     type="text" 
                     placeholder="Search Identifier" 
-                    className="bg-slate-700 text-white border-slate-600" 
+                    className="bg-slate-700 text-white border-slate-600 flex-1" 
                     value={searchIdentifier}
                     onChange={(e) => setSearchIdentifier(e.target.value)}
                   />
                   <Button 
-                    className="bg-blue-600 hover:bg-blue-700 text-white" 
+                    className="w-full sm:w-auto bg-blue-600 hover:bg-blue-700 text-white" 
                     onClick={() => setSearchIdentifier('')} // Clear search
                   >
                     Clear
@@ -511,35 +514,37 @@ export default function NFTDashboard() {
                 </div>
 
                 {groupedMdSnapshots.length > 0 ? (
-                  <Table>
-                    <TableHeader>
-                      <TableRow>
-                        <TableHead className="text-white">Sender</TableHead>
-                        <TableHead className="text-white">Identifiers</TableHead>
-                      </TableRow>
-                    </TableHeader>
-                    <TableBody>
-                      {groupedMdSnapshots.map((group, index) => (
-                        <TableRow key={index}>
-                          <TableCell className="text-gray-300 flex items-center">
-                            <span>{`${group.sender.slice(0, 5)}...${group.sender.slice(-5)}`}</span>
-                            <Button
-                              variant="ghost"
-                              size="sm"
-                              onClick={() => copyToClipboard(group.sender)}
-                            >
-                              <FaCopy />
-                            </Button>
-                          </TableCell>
-                          <TableCell className="text-gray-300">
-                            {group.identifiers.map((id, idx) => (
-                              <div key={idx}>{id}</div>
-                            ))}
-                          </TableCell>
+                  <div className="overflow-x-auto">
+                    <Table className="min-w-full">
+                      <TableHeader>
+                        <TableRow>
+                          <TableHead className="text-white">Sender</TableHead>
+                          <TableHead className="text-white">Identifiers</TableHead>
                         </TableRow>
-                      ))}
-                    </TableBody>
-                  </Table>
+                      </TableHeader>
+                      <TableBody>
+                        {groupedMdSnapshots.map((group, index) => (
+                          <TableRow key={index}>
+                            <TableCell className="text-gray-300 flex items-center">
+                              <span>{`${group.sender.slice(0, 5)}...${group.sender.slice(-5)}`}</span>
+                              <Button
+                                variant="ghost"
+                                size="sm"
+                                onClick={() => copyToClipboard(group.sender)}
+                              >
+                                <FaCopy />
+                              </Button>
+                            </TableCell>
+                            <TableCell className="text-gray-300">
+                              {group.identifiers.map((id, idx) => (
+                                <div key={idx}>{id}</div>
+                              ))}
+                            </TableCell>
+                          </TableRow>
+                        ))}
+                      </TableBody>
+                    </Table>
+                  </div>
                 ) : (
                   <div className="text-gray-300">No MD Snapshots found.</div>
                 )}
