@@ -20,6 +20,53 @@ import { Address } from '@multiversx/sdk-core';
 import { GAS_PRICE, VERSION } from '@/localConstants';
 import { bech32 } from 'bech32'; // Ensure correct import
 
+// Define TypeScript interfaces to avoid using 'any'
+interface Transfer {
+  type: string;
+  name: string;
+  ticker: string;
+  collection: string;
+  identifier: string;
+  value: string;
+}
+
+interface ActionArguments {
+  transfers: Transfer[];
+  receiver: string;
+  functionName: string;
+  functionArgs: string[];
+}
+
+interface Action {
+  category: string;
+  name: string;
+  description: string;
+  arguments: ActionArguments;
+}
+
+interface Transaction {
+  txHash: string;
+  gasLimit: number;
+  gasPrice: number;
+  gasUsed: number;
+  miniBlockHash: string;
+  nonce: number;
+  receiver: string;
+  receiverShard: number;
+  round: number;
+  sender: string;
+  senderShard: number;
+  signature: string;
+  status: string;
+  value: string;
+  fee: string;
+  timestamp: number;
+  data: string;
+  function: string;
+  action: Action;
+  type: string;
+}
+
 export default function NFTDashboard() {
   const [activeTab, setActiveTab] = useState("account")
   const [lastMints, setLastMints] = useState<{ sender: string; value: string; timestamp: number; txHash: string; }[]>([]); // Define the type for lastMints
@@ -214,8 +261,8 @@ export default function NFTDashboard() {
     const fetchMdSnapshots = async () => {
       try {
         const response = await fetch("https://api.multiversx.com/accounts/erd1qqqqqqqqqqqqqpgq5re66vt0dlee8v83dtyh6k54qqpjs3ketxfq9tcd29/transfers?size=500&token=VRSENYATH2-6b632c");
-        const data = await response.json();
-        const snapshots = data.map((tx: any) => {
+        const data: Transaction[] = await response.json(); // Specify the type of data
+        const snapshots = data.map((tx: Transaction) => { // Use Transaction interface instead of any
           const sender = tx.sender;
           const identifier = tx.action.arguments.transfers[0]?.identifier || '';
           return { sender, identifier };
