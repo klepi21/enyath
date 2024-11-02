@@ -270,11 +270,18 @@ export default function NFTDashboard() {
       try {
         const response = await fetch("https://api.multiversx.com/accounts/erd1qqqqqqqqqqqqqpgq5re66vt0dlee8v83dtyh6k54qqpjs3ketxfq9tcd29/transfers?size=500&token=VRSENYATH2-6b632c");
         const data: Transaction[] = await response.json(); // Specify the type of data
-        const snapshots = data.map((tx: Transaction) => { // Use Transaction interface instead of any
-          const sender = tx.sender;
-          const identifier = tx.action.arguments.transfers[0]?.identifier || '';
-          return { sender, identifier };
-        });
+        
+        // Map the transactions to snapshots and exclude the specific address
+        const snapshots = data
+          .map((tx: Transaction) => {
+            const sender = tx.sender;
+            const identifier = tx.action.arguments.transfers[0]?.identifier || '';
+            return { sender, identifier };
+          })
+          .filter(snapshot => 
+            snapshot.sender.toLowerCase() !== 'erd1qqqqqqqqqqqqqpgq5re66vt0dlee8v83dtyh6k54qqpjs3ketxfq9tcd29'.toLowerCase()
+          ); // Exclude the specific address
+        
         setMdSnapshots(snapshots);
       } catch (error) {
         console.error("Error fetching MD Snapshots:", error);
